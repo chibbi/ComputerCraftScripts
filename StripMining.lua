@@ -3,7 +3,7 @@ local Helper = require("./Helper")
 local args = {...}
 local amountCrossings = 5 -- DEFAULT
 local sideTunnelLength = 5 -- DEFAULT
-local distanceBetweenCrossings = 5 -- DEFAULT
+local distanceBetweenCrossings = 3 -- DEFAULT
 
 local acceptedFuels = {
     "minecraft:coal_block",
@@ -18,7 +18,10 @@ local trash = {
 
 local fuelSlots = {}
 for x = 1, #acceptedFuels do
-    table.insert(fuelSlots, Helper.GetItem(acceptedFuels[x]))
+    local slot = Helper.GetItem(acceptedFuels[x])
+    if(slot ~= nil) then
+        table.insert(fuelSlots, slot)
+    end
 end
 
 local torchSlot = Helper.GetItem("minecraft:torch")
@@ -27,7 +30,8 @@ local chestSlot = Helper.GetItem("minecraft:chest")
 
 -- fuels the turtle and updates the fueltable
 local function fuelling()
-    if(turtle.getFuelLevel ~= "unlimited" and turtle.getFuelLevel() < 20) then
+    if(turtle.getFuelLevel ~= "unlimited" and turtle.getFuelLevel() < 50) then
+        print("fuelling: DEBUG")
         for x = 1, #fuelSlots do
             local data = turtle.getItemDetail(fuelSlots[x])
             if(data ~= nil) then
@@ -39,7 +43,15 @@ local function fuelling()
             end
         end
         if(next(fuelSlots) == nil) then
-            error("No Fuel Any More", 0)
+            for x = 1, #acceptedFuels do
+                local slot = Helper.GetItem(acceptedFuels[x])
+                if(slot ~= nil) then
+                    table.insert(fuelSlots, slot)
+                end
+            end
+            if(next(fuelSlots) == nil) then
+                error("No Fuel Any More", 0)
+            end
         end
     end
 end
@@ -47,36 +59,46 @@ end
 -- cleans the Inventory from any ores and stone/ obsidian
 -- without putting torches fuel or chests out of its inventory
 local function clearInventory()
+    print("CLeaining: DEBUG")
+    for x = 1, #trash do
+        Helper.DropItem(trash[x])
+    end
     if(Helper.isInvFull()) then
-        turtle.select(chestSlot)
-        turtle.placeDown()
-        local unallowedSlots = {}
-        for x = 1, #fuelSlots do
-            local data = turtle.getItemDetail(fuelSlots[x])
-            if(data ~= nil and data.name ~= "minecraft:bucket") then
-                unallowedSlots.insert(fuelSlots[x])
-                return
-            else
-                table.remove(fuelSlots, x)
-            end
-        end
-        if(turtle.getItemDetail(torchSlot) ~= nil) then
-            unallowedSlots.insert(torchSlot)
-        end
-        if(turtle.getItemDetail(chestSlot) ~= nil) then
-            unallowedSlots.insert(chestSlot)
-        end
-        for i = 1, 16, 1 do
-            local allowed = true
-            for x = 1, #unallowedSlots do
-                if(i == unallowedSlots[x]) then
-                    allowed = false
+        print("Inventory is full")
+        if(chestSlot ~= nil) then
+            if(turtle.getItemDetail(chestSlot).name == "minecraft:chest") then
+                print("Depositing into Chest")
+                turtle.select(chestSlot)
+                turtle.placeDown()
+                local unallowedSlots = {}
+                for x = 1, #fuelSlots do
+                    local data = turtle.getItemDetail(fuelSlots[x])
+                    if(data ~= nil and data.name ~= "minecraft:bucket") then
+                        table.insert(unallowedSlots, fuelSlots[x])
+                        return
+                    else
+                        table.remove(fuelSlots, x)
+                    end
+                end
+                if(turtle.getItemDetail(torchSlot) ~= nil) then
+                    table.insert(unallowedSlots, torchSlot)
+                end
+                if(turtle.getItemDetail(chestSlot) ~= nil) then
+                    table.insert(unallowedSlots, chestSlot)
+                end
+                for i = 1, 16, 1 do
+                    local allowed = true
+                    for x = 1, #unallowedSlots do
+                        if(i == unallowedSlots[x]) then
+                            allowed = false
+                        end
+                    end
+                    if(allowed)then
+                        turtle.dropDown()
+                    end
                 end
             end
-            if(allowed)then
-                turtle.dropDown()
-            end
-        end   
+        end
     end
 end
 
@@ -90,10 +112,10 @@ end
 -- is just digging a three high one wide tunnel (digs down, up and forward)
 local function digForwardTunnel(tunnelLength)
     for i = 1, tunnelLength, 1 do
-        turtle.digUp()
-        turtle.digDown()
         turtle.dig()
         turtle.forward()
+        turtle.digUp()
+        turtle.digDown()
     end
 end
 
@@ -132,29 +154,35 @@ else
         --error("You have to specify how long the Distance between two Crossings should be\n more info try: StripMining -h",4)
     end
 end
+term.setTextColor( colors.yellow )
 -- check if enough torches
-if(torchSlot ~= nil and turtle.getItemCount(torchSlot) <= amountCrossings /2 ) then
+if(torchSlot == nil or turtle.getItemCount(torchSlot) <= amountCrossings /2 ) then
     print("WARNING: you do not have enough torches in the inventory to light up the mine")
 end
 -- check if fuel exists
-for x = 1, #fuelSlots do
-    if(fuelSlots[x] ~= nil and turtle.getItemCount(fuelSlots[x]) <= 1 ) then
-        print("WARNING: you do not have any fuel, the turtle is likely to run out of juice")
-    end
+if(next(fuelSlots) == nil ) then
+    print("WARNING: you do not have any fuel, the turtle is likely to run out of juice Current Juice: ", turtle.getFuelLevel())
 end
 -- check if chests exist
-if(chestSlot ~= nil and turtle.getItemCount(chestSlot) < 1  ) then
+if(chestSlot == nil or turtle.getItemCount(chestSlot) < 1  ) then
     print("WARNING: you do not have any chests in the inventory, some ores will likely be lost")
 end
+
+-- Normal Operation
+term.setTextColor( colors.white )
 for i = 1, amountCrossings, 1 do
     fuelling()
     clearInventory()
     crossingToCrossing(sideTunnelLength, distanceBetweenCrossings)
-    if(i % 2 == 0) then
-        turtle.select(torchSlot)
-        turtle.placeDown()
+    if(i % 2 == 0 and torchSlot ~= nil) then
+        print(turtle.getItemDetail(torchSlot).name, " == minecraft:torch")
+        if(turtle.getItemDetail(torchSlot).name == "minecraft:torch") then
+            print("Placing Torch")
+            turtle.select(torchSlot)
+            turtle.placeDown()
+        end
     end
-    print("Finished Crossing ",i, " with ", turtle.getFuelLevel, " Fuel")
+    print("Finished Crossing ",i, " with ", turtle.getFuelLevel(), " Fuel")
 end
 
 print("EYYYY i amma finished tha maammaaa ")

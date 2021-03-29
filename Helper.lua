@@ -9,14 +9,26 @@ local function GetItem(desiredItemID)
     end
 end
 
+local function DropItem(desiredItemID) 
+    for i = 1, 16, 1 do
+        local data = turtle.getItemDetail(i)
+        if(data ~= nil) then
+            if(data.name == desiredItemID) then
+                turtle.select(i)
+                turtle.drop()
+            end
+        end
+    end
+end
+
 local function isInvFull()
     for i = 1, 16, 1 do
         local data = turtle.getItemDetail(i)
         if(data == nil) then
-                return true
+                return false
         end
     end
-    return false
+    return true
 end
 
-return { GetItem = GetItem, isInvFull = isInvFull}
+return { GetItem = GetItem, DropItem = DropItem,isInvFull = isInvFull}

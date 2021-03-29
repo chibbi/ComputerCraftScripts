@@ -107,17 +107,17 @@ end
 if(args == "-h") then
     error("stripmine AMOUNTOFCROSSINGS SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
 else
-    if(tonumber(args[0]) >= 1 ) then
+    if(args[0] ~= nil and tonumber(args[0]) >= 1 ) then
         amountCrossings = tonumber(args[0])
     else   
         error("You have to specify the amount of Crossings you want\n more info try: StripMining -h",4)
     end
-    if(tonumber(args[1]) >= 1 ) then
+    if(args[1] ~= nil and tonumber(args[1]) >= 1 ) then
         sideTunnelLength = tonumber(args[1])
     else   
         error("You have to specify how long the sideTunnel should be\n more info try: StripMining -h",4)
     end
-    if(tonumber(args[2]) >= 1 ) then
+    if(args[2] ~= nil and tonumber(args[2]) >= 1 ) then
         distanceBetweenCrossings = tonumber(args[2])
     else   
         error("You have to specify how long the Distance between two Crossings should be\n more info try: StripMining -h",4)

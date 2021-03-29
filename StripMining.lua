@@ -68,6 +68,7 @@ local function clearInventory()
         if(chestSlot ~= nil) then
             if(turtle.getItemDetail(chestSlot).name == "minecraft:chest") then
                 print("Depositing into Chest")
+                turtle.back()
                 turtle.select(chestSlot)
                 turtle.placeDown()
                 local unallowedSlots = {}
@@ -97,6 +98,7 @@ local function clearInventory()
                         turtle.dropDown()
                     end
                 end
+                turtle.forward()
             end
         end
     end
@@ -179,7 +181,7 @@ for i = 1, amountCrossings, 1 do
         if(turtle.getItemDetail(torchSlot).name == "minecraft:torch") then
             print("Placing Torch")
             turtle.select(torchSlot)
-            turtle.placeDown()
+            turtle.placeUp()
         end
     end
     print("Finished Crossing ",i, " with ", turtle.getFuelLevel(), " Fuel")

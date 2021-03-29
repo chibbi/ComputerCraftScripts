@@ -35,7 +35,7 @@ local function fuelling()
                 turtle.refuel()
                 return
             else
-                table.remove(fuelSlots[x])
+                table.remove(fuelSlots, x)
             end
         end
         if(next(fuelSlots) == nil) then
@@ -53,11 +53,11 @@ local function clearInventory()
         local unallowedSlots = {}
         for x = 1, #fuelSlots do
             local data = turtle.getItemDetail(fuelSlots[x])
-            if(data ~= nil) then
+            if(data ~= nil and data.name ~= "minecraft:bucket") then
                 unallowedSlots.insert(fuelSlots[x])
                 return
             else
-                table.remove(fuelSlots[x])
+                table.remove(fuelSlots, x)
             end
         end
         if(turtle.getItemDetail(torchSlot) ~= nil) then

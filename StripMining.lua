@@ -18,7 +18,7 @@ local trash = {
 
 local fuelSlots = {}
 for x = 1, #acceptedFuels do
-    table.insert(fuelSlots, Helper.GetItem(x))
+    table.insert(fuelSlots, Helper.GetItem(acceptedFuels[x]))
 end
 
 local torchSlot = Helper.GetItem("minecraft:torch")
@@ -29,13 +29,13 @@ local chestSlot = Helper.GetItem("minecraft:chest")
 local function fuelling()
     if(turtle.getFuelLevel ~= "unlimited" and turtle.getFuelLevel() < 20) then
         for x = 1, #fuelSlots do
-            local data = turtle.getItemDetail(x)
+            local data = turtle.getItemDetail(fuelSlots[x])
             if(data ~= nil) then
-                turtle.select(x)
+                turtle.select(fuelSlots[x])
                 turtle.refuel()
                 return
             else
-                table.remove(x)
+                table.remove(fuelSlots[x])
             end
         end
         if(next(fuelSlots) == nil) then
@@ -52,12 +52,12 @@ local function clearInventory()
         turtle.placeDown()
         local unallowedSlots = {}
         for x = 1, #fuelSlots do
-            local data = turtle.getItemDetail(x)
+            local data = turtle.getItemDetail(fuelSlots[x])
             if(data ~= nil) then
-                unallowedSlots.insert(x)
+                unallowedSlots.insert(fuelSlots[x])
                 return
             else
-                table.remove(x)
+                table.remove(fuelSlots[x])
             end
         end
         if(turtle.getItemDetail(torchSlot) ~= nil) then
@@ -69,7 +69,7 @@ local function clearInventory()
         for i = 1, 16, 1 do
             local allowed = true
             for x = 1, #unallowedSlots do
-                if(i == x) then
+                if(i == unallowedSlots[x]) then
                     allowed = false
                 end
             end
@@ -115,6 +115,7 @@ end
 if(args == nil or args == "-h") then
     error("stripmine AMOUNTOFCROSSINGS SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
 else
+    -- FIXME: this check of args doesn't work, and args are not used yet 
     if(args[0] ~= nil ) then
         amountCrossings = tonumber(args[0])
     else   
@@ -137,7 +138,7 @@ if(torchSlot ~= nil and turtle.getItemCount(torchSlot) <= amountCrossings /2 ) t
 end
 -- check if fuel exists
 for x = 1, #fuelSlots do
-    if(x ~= nil and turtle.getItemCount(x) <= 1 ) then
+    if(fuelSlots[x] ~= nil and turtle.getItemCount(fuelSlots[x]) <= 1 ) then
         print("WARNING: you do not have any fuel, the turtle is likely to run out of juice")
     end
 end
@@ -148,7 +149,7 @@ end
 for i = 1, amountCrossings, 1 do
     fuelling()
     clearInventory()
-    crossingToCrossing(args[1], args[2])
+    crossingToCrossing(sideTunnelLength, distanceBetweenCrossings)
     if(i % 2 == 0) then
         turtle.select(torchSlot)
         turtle.placeDown()

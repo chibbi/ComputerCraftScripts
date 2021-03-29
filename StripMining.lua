@@ -11,6 +11,7 @@ local acceptedFuels = {
     "minecraft:lava_bucket"
 }
 
+-- TODO: this will be used to dump this out, without polluting the chests (not in yet)
 local trash = {
     "minecraft:cobblestone"
 }
@@ -24,8 +25,9 @@ local torchSlot = Helper.GetItem("minecraft:torch")
 
 local chestSlot = Helper.GetItem("minecraft:chest")
 
+-- fuels the turtle and updates the fueltable
 local function fuelling()
-    if(turtle.getFuelLevel ~= "unlimited" and turtle.getFuelLevel() < 1) then
+    if(turtle.getFuelLevel ~= "unlimited" and turtle.getFuelLevel() < 20) then
         for x = 1, #fuelSlots do
             local data = turtle.getItemDetail(x)
             if(data ~= nil) then
@@ -42,6 +44,8 @@ local function fuelling()
     end
 end
 
+-- cleans the Inventory from any ores and stone/ obsidian
+-- without putting torches fuel or chests out of its inventory
 local function clearInventory()
     if(Helper.isInvFull()) then
         turtle.select(chestSlot)
@@ -76,12 +80,14 @@ local function clearInventory()
     end
 end
 
+-- just walks the desired length forward
 local function walk(length)
     for i = 1, length, 1 do
         turtle.forward()
     end
 end
 
+-- is just digging a three high one wide tunnel (digs down, up and forward)
 local function digForwardTunnel(tunnelLength)
     for i = 1, tunnelLength, 1 do
         turtle.digUp()
@@ -91,6 +97,8 @@ local function digForwardTunnel(tunnelLength)
     end
 end
 
+-- Does the whole stripmine from one crossing to another
+-- aka. form one sidetunnel to another
 local function crossingToCrossing(tunnelLength, distanceBetween)
     turtle.turnLeft()
     for i = 1, 2, 1 do
@@ -103,7 +111,7 @@ local function crossingToCrossing(tunnelLength, distanceBetween)
     digForwardTunnel(distanceBetween)
 end
 
--- if args == -h then print help
+-- chechk if args are filled in, or args == -h (-h stands for --help)
 if(args == nil or args == "-h") then
     error("stripmine AMOUNTOFCROSSINGS SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
 else

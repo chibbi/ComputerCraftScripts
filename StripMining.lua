@@ -181,7 +181,7 @@ for i = 1, amountCrossings, 1 do
         if(turtle.getItemDetail(torchSlot).name == "minecraft:torch") then
             print("Placing Torch")
             turtle.select(torchSlot)
-            turtle.placeUp()
+            turtle.placeDown()
         end
     end
     print("Finished Crossing ",i, " with ", turtle.getFuelLevel(), " Fuel")

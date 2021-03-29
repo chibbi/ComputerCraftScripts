@@ -115,24 +115,24 @@ end
 if(args == nil or args == "-h") then
     error("stripmine AMOUNTOFCROSSINGS SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
 else
-    if(args[0] ~= nil and tonumber(args[0]) >= 1 ) then
+    if(args[0] ~= nil ) then
         amountCrossings = tonumber(args[0])
     else   
-        error("You have to specify the amount of Crossings you want\n more info try: StripMining -h",4)
+        --error("You have to specify the amount of Crossings you want\n more info try: StripMining -h",4)
     end
-    if(args[1] ~= nil and tonumber(args[1]) >= 1 ) then
+    if(args[1] ~= nil ) then
         sideTunnelLength = tonumber(args[1])
     else   
-        error("You have to specify how long the sideTunnel should be\n more info try: StripMining -h",4)
+        --error("You have to specify how long the sideTunnel should be\n more info try: StripMining -h",4)
     end
-    if(args[2] ~= nil and tonumber(args[2]) >= 1 ) then
+    if(args[2] ~= nil ) then
         distanceBetweenCrossings = tonumber(args[2])
     else   
-        error("You have to specify how long the Distance between two Crossings should be\n more info try: StripMining -h",4)
+        --error("You have to specify how long the Distance between two Crossings should be\n more info try: StripMining -h",4)
     end
 end
 -- check if enough torches
-if(torchSlot ~= nil and turtle.getItemCount(torchSlot) <= args[0] /2 ) then
+if(torchSlot ~= nil and turtle.getItemCount(torchSlot) <= amountCrossings /2 ) then
     print("WARNING: you do not have enough torches in the inventory to light up the mine")
 end
 -- check if fuel exists
@@ -145,7 +145,7 @@ end
 if(chestSlot ~= nil and turtle.getItemCount(chestSlot) < 1  ) then
     print("WARNING: you do not have any chests in the inventory, some ores will likely be lost")
 end
-for i = 1, args[0], 1 do
+for i = 1, amountCrossings, 1 do
     fuelling()
     clearInventory()
     crossingToCrossing(args[1], args[2])

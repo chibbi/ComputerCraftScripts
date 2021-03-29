@@ -104,7 +104,7 @@ local function crossingToCrossing(tunnelLength, distanceBetween)
 end
 
 -- if args == -h then print help
-if(args == "-h") then
+if(args == "-h" or args == nil) then
     error("stripmine AMOUNTOFCROSSINGS SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
 else
     if(args[0] ~= nil and tonumber(args[0]) >= 1 ) then

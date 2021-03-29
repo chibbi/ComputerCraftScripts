@@ -105,11 +105,23 @@ end
 
 -- if args == -h then print help
 if(args == "-h") then
-    error("stripmine SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS AMOUNTOFCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)")
+    error("stripmine SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS AMOUNTOFCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
 else
-    amountCrossings = args[0]
-    sideTunnelLength = args[1]
-    distanceBetweenCrossings = args[2]
+    if(tonumber(args[0]) >= 1 ) then
+        amountCrossings = tonumber(args[0])
+    else   
+        error("You have to specify the amount of Crossings you want\n more info try: StripMining -h",4)
+    end
+    if(tonumber(args[1]) >= 1 ) then
+        sideTunnelLength = tonumber(args[1])
+    else   
+        error("You have to specify how long the sideTunnel should be\n more info try: StripMining -h",4)
+    end
+    if(tonumber(args[2]) >= 1 ) then
+        sideTunnelLength = tonumber(args[2])
+    else   
+        error("You have to specify how long the Distance between two Crossings should be\n more info try: StripMining -h",4)
+    end
 end
 -- check if enough torches
 if(torchSlot ~= nil and turtle.getItemCount(torchSlot) <= amountCrossings /2 ) then

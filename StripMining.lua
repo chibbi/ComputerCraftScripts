@@ -105,7 +105,7 @@ end
 
 -- if args == -h then print help
 if(args == "-h") then
-    error("stripmine SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS AMOUNTOFCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
+    error("stripmine AMOUNTOFCROSSINGS SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
 else
     if(tonumber(args[0]) >= 1 ) then
         amountCrossings = tonumber(args[0])
@@ -118,13 +118,13 @@ else
         error("You have to specify how long the sideTunnel should be\n more info try: StripMining -h",4)
     end
     if(tonumber(args[2]) >= 1 ) then
-        sideTunnelLength = tonumber(args[2])
+        distanceBetweenCrossings = tonumber(args[2])
     else   
         error("You have to specify how long the Distance between two Crossings should be\n more info try: StripMining -h",4)
     end
 end
 -- check if enough torches
-if(torchSlot ~= nil and turtle.getItemCount(torchSlot) <= amountCrossings /2 ) then
+if(torchSlot ~= nil and turtle.getItemCount(torchSlot) <= args[0] /2 ) then
     print("WARNING: you do not have enough torches in the inventory to light up the mine")
 end
 -- check if fuel exists
@@ -137,10 +137,10 @@ end
 if(chestSlot ~= nil and turtle.getItemCount(chestSlot) < 1  ) then
     print("WARNING: you do not have any chests in the inventory, some ores will likely be lost")
 end
-for i = 1, amountCrossings, 1 do
+for i = 1, args[0], 1 do
     fuelling()
     clearInventory()
-    crossingToCrossing(sideTunnelLength, distanceBetweenCrossings)
+    crossingToCrossing(args[1], args[2])
     if(i % 2 == 0) then
         turtle.select(torchSlot)
         turtle.placeDown()

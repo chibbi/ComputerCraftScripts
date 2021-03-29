@@ -1,8 +1,9 @@
 local Helper = require("./Helper.lua")
 
-local amountCrossings = 5 -- PARAMETER
-local sideTunnelLength = 5 -- PARAMETER
-local distanceBetweenCrossings = 5 -- PARAMETER
+local args = {...}
+local amountCrossings = 5 -- DEFAULT
+local sideTunnelLength = 5 -- DEFAULT
+local distanceBetweenCrossings = 5 -- DEFAULT
 
 local acceptedFuels = {
     "minecraft:coal_block",
@@ -85,12 +86,31 @@ local function crossingToCrossing(tunnelLength, distanceBetween)
         walk(tunnelLength)
     end
     turtle.turnRight()
-    digForwardTunnel(distancebetween)
+    digForwardTunnel(distanceBetween)
 end
 
 -- if args == -h then print help
+if(args == "-h") then
+    error("stripmine SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS AMOUNTOFCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)")
+else
+    amountCrossings = args[0]
+    sideTunnelLength = args[1]
+    distanceBetweenCrossings = args[2]
+end
 -- check if enough torches
--- warning if no fuel or chest
+if(torchSlot ~= nil and turtle.getItemCount(torchSlot) <= amountCrossings /2 ) then
+    print("WARNING: you do not have enough torches in the inventory to light up the mine")
+end
+-- check if fuel exists
+for x = 1, #fuelSlots do
+    if(x ~= nil and turtle.getItemCount(x) <= 1 ) then
+        print("WARNING: you do not have any fuel, the turtle is likely to run out of juice")
+    end
+end
+-- check if chests exist
+if(chestSlot ~= nil and turtle.getItemCount(chestSlot) < 1  ) then
+    print("WARNING: you do not have any chests in the inventory, some ores will likely be lost")
+end
 for i = 1, amountCrossings, 1 do
     fuelling()
     clearInventory()

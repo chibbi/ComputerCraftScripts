@@ -19,12 +19,4 @@ local function isInvFull()
     return false
 end
 
-local function clearInv(notAllowedSlots)
-    if(isInvFull()) then
-        turtle.select(chestSlot)
-        turtle.placeDown()
-        
-    end    
-end
-
-return { GetItem = GetItem, isInvFull = isInvFull, clearInv = clearInv}
+return { GetItem = GetItem, isInvFull = isInvFull}

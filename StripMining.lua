@@ -1,4 +1,4 @@
-local Helper = require("./Helper.lua")
+local Helper = require("./Helper")
 
 local args = {...}
 local amountCrossings = 5 -- DEFAULT
@@ -43,23 +43,37 @@ local function fuelling()
 end
 
 local function clearInventory()
-    local unallowedSlots = {}
-    for x = 1, #fuelSlots do
-        local data = turtle.getItemDetail(x)
-        if(data ~= nil) then
-            unallowedSlots.insert(x)
-            return
-        else
-            table.remove(x)
+    if(Helper.isInvFull()) then
+        turtle.select(chestSlot)
+        turtle.placeDown()
+        local unallowedSlots = {}
+        for x = 1, #fuelSlots do
+            local data = turtle.getItemDetail(x)
+            if(data ~= nil) then
+                unallowedSlots.insert(x)
+                return
+            else
+                table.remove(x)
+            end
         end
+        if(turtle.getItemDetail(torchSlot) ~= nil) then
+            unallowedSlots.insert(torchSlot)
+        end
+        if(turtle.getItemDetail(chestSlot) ~= nil) then
+            unallowedSlots.insert(chestSlot)
+        end
+        for i = 1, 16, 1 do
+            local allowed = true
+            for x = 1, #unallowedSlots do
+                if(i == x) then
+                    allowed = false
+                end
+            end
+            if(allowed)then
+                turtle.dropDown()
+            end
+        end   
     end
-    if(turtle.getItemDetail(torchSlot) ~= nil) then
-        unallowedSlots.insert(torchSlot)
-    end
-    if(turtle.getItemDetail(chestSlot) ~= nil) then
-        unallowedSlots.insert(chestSlot)
-    end
-    Helper.clearInv()
 end
 
 local function walk(length)

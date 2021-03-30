@@ -11,7 +11,6 @@ local acceptedFuels = {
     "minecraft:lava_bucket"
 }
 
--- TODO: this will be used to dump this out, without polluting the chests (not in yet)
 local trash = {
     "minecraft:cobblestone"
 }
@@ -31,7 +30,6 @@ local chestSlot = Helper.GetItem("minecraft:chest")
 -- fuels the turtle and updates the fueltable
 local function fuelling()
     if(turtle.getFuelLevel ~= "unlimited" and turtle.getFuelLevel() < 50) then
-        print("fuelling: DEBUG")
         for x = 1, #fuelSlots do
             local data = turtle.getItemDetail(fuelSlots[x])
             if(data ~= nil) then
@@ -47,6 +45,7 @@ local function fuelling()
                 local slot = Helper.GetItem(acceptedFuels[x])
                 if(slot ~= nil) then
                     table.insert(fuelSlots, slot)
+                    return
                 end
             end
             if(next(fuelSlots) == nil) then
@@ -59,7 +58,6 @@ end
 -- cleans the Inventory from any ores and stone/ obsidian
 -- without putting torches fuel or chests out of its inventory
 local function clearInventory()
-    print("CLeaining: DEBUG")
     for x = 1, #trash do
         Helper.DropItem(trash[x])
     end
@@ -140,18 +138,18 @@ if(args == nil or args == "-h") then
     error("stripmine AMOUNTOFCROSSINGS SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
 else
     -- FIXME: this check of args doesn't work, and args are not used yet 
-    if(args[0] ~= nil ) then
-        amountCrossings = tonumber(args[0])
+    if(args[1] ~= nil ) then
+        amountCrossings = tonumber(args[1])
     else   
         --error("You have to specify the amount of Crossings you want\n more info try: StripMining -h",4)
     end
-    if(args[1] ~= nil ) then
-        sideTunnelLength = tonumber(args[1])
+    if(args[2] ~= nil ) then
+        sideTunnelLength = tonumber(args[2])
     else   
         --error("You have to specify how long the sideTunnel should be\n more info try: StripMining -h",4)
     end
-    if(args[2] ~= nil ) then
-        distanceBetweenCrossings = tonumber(args[2])
+    if(args[3] ~= nil ) then
+        distanceBetweenCrossings = tonumber(args[3])
     else   
         --error("You have to specify how long the Distance between two Crossings should be\n more info try: StripMining -h",4)
     end
@@ -163,7 +161,7 @@ if(torchSlot == nil or turtle.getItemCount(torchSlot) <= amountCrossings /2 ) th
 end
 -- check if fuel exists
 if(next(fuelSlots) == nil ) then
-    print("WARNING: you do not have any fuel, the turtle is likely to run out of juice Current Juice: ", turtle.getFuelLevel())
+    print("WARNING: you do not have any fuel, the turtle is likely to run out of juice \n Current Fuel: ", turtle.getFuelLevel())
 end
 -- check if chests exist
 if(chestSlot == nil or turtle.getItemCount(chestSlot) < 1  ) then
@@ -179,7 +177,6 @@ for i = 1, amountCrossings, 1 do
     if(i % 2 == 0 and torchSlot ~= nil) then
         print(turtle.getItemDetail(torchSlot).name, " == minecraft:torch")
         if(turtle.getItemDetail(torchSlot).name == "minecraft:torch") then
-            print("Placing Torch")
             turtle.select(torchSlot)
             turtle.placeDown()
         end
@@ -187,5 +184,6 @@ for i = 1, amountCrossings, 1 do
     print("Finished Crossing ",i, " with ", turtle.getFuelLevel(), " Fuel")
 end
 
-print("EYYYY i amma finished tha maammaaa ")
-
+term.setTextColor( colors.green )
+print("Stripmining finished")
+term.setTextColor( colors.white )

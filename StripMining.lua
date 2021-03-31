@@ -133,7 +133,7 @@ local function crossingToCrossing(tunnelLength, distanceBetween)
     digForwardTunnel(distanceBetween)
 end
 
--- chechk if args are filled in, or args == -h (-h stands for --help)
+-- check if args are filled in, or args == -h (-h stands for --help)
 if(args == nil or args == "-h") then
     error("stripmine AMOUNTOFCROSSINGS SIDETUNNELLENGTH DISTANCEBETWEENCROSSINGS \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
 else

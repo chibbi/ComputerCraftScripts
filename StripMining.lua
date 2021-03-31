@@ -112,6 +112,8 @@ end
 -- is just digging a three high one wide tunnel (digs down, up and forward)
 local function digForwardTunnel(tunnelLength)
     for i = 1, tunnelLength, 1 do
+        -- TODO: check if it is Air, if not keep digging
+        -- do that independently for dig(), digUp() and digDown()
         turtle.dig()
         turtle.forward()
         turtle.digUp()

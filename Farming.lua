@@ -74,18 +74,46 @@ local function walk(length)
     end
 end
 
-local function farm()
-    -- deposit stuff into the chest behind it (IF CHEST IS BEHIND IT)
-    for i = 1, rows, 1 do
-        for i = 1, lines, 1 do
-            -- check if crop is mature underneath
-            -- if it is, then harvest and plant a new seed
-            -- if not then not
+local function harvest()
+    turtle.digDown()
+    for x = 1, #seedSlots do
+        local data = turtle.getItemDetail(seedSlots[x])
+        if(data ~= nil) then
+            turtle.select(seedSlots[x])
+            turtle.placeDown()
+            return
+        else
+            table.remove(seedSlots, x)
+        end
+    end
+    if(next(seedSlots) == nil) then
+        for x = 1, #acceptedSeeds do
+            local slot = Helper.GetItem(acceptedSeeds[x])
+            if(slot ~= nil) then
+                table.insert(seedSlots, slot)
+                return
+            end
+        end
+        if(next(fuelSlots) == nil) then
+            error("No Seeds Any More", 0)
         end
     end
 end
-
-Helper.writeState(acceptedFuels)
+local function farm()
+    -- deposit stuff into the chest behind it (IF CHEST IS BEHIND IT)
+    for i = states[1], rows, 1 do
+        for j = states[2], lines, 1 do
+            local isMature = false
+            for x = 1, #matureCrops do
+                if(turtle.inspectDown().name == matureCrops[x]) then
+                    harvest()
+                end
+            end
+            states[2] = j + 1
+        end
+        states[1] = i + 1
+    end
+end
 
 -- check if args are filled in, or args == -h (-h stands for --help)
 if(args == nil or args == "-h") then

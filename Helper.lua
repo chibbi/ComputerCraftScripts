@@ -31,4 +31,17 @@ local function isInvFull()
     return true
 end
 
-return { GetItem = GetItem, DropItem = DropItem,isInvFull = isInvFull}
+local function readState() 
+    local file = fs.open("State.txt","a")
+    file.flush()
+    return fs.open("State.txt","r")
+end
+
+local function writeState(state) 
+    local file = fs.open("State.txt","w")
+    file.write(state)
+    file.flush()
+end
+
+
+return { GetItem = GetItem, DropItem = DropItem, isInvFull = isInvFull, readState = readState, writeState = writeState}

@@ -1,9 +1,17 @@
 local Helper = require("./Helper")
 
 local args = {...}
-local rows = 10
-local lines = 3
+local rows = 10 + 1
+local lines = 3 + 1
 local states = Helper.readState()
+
+local temp = { 
+    1,
+    1
+}
+if(next(states) == nil) then
+    Helper.writeState(temp)
+end
 
 local acceptedFuels = {
     "minecraft:coal_block",
@@ -110,6 +118,7 @@ local function farm()
                 end
             end
             states[2] = j + 1
+            Helper.writeState(states)
         end
         states[1] = i + 1
     end

@@ -28,12 +28,6 @@ local acceptedSeeds = {
     "minecraft:wheat_seeds"
 }
 
-local matureCrops = {
-    "minecraft:carrots",
-    "minecraft:potatoes",
-    "minecraft:wheat"
-}
-
 local fuelSlots = {}
 for x = 1, #acceptedFuels do
     local slot = Helper.GetItem(acceptedFuels[x])
@@ -112,19 +106,19 @@ local function harvest()
 end
 local function farm()
     for i = tonumber(states[1]), lines, 1 do
+        print("Line ",i)
         for j = tonumber(states[2]), rows, 1 do
-            local isMature = false
-            for x = 1, #matureCrops do
-                local isBlock, block = turtle.inspectDown()
-                if(block.name == matureCrops[x]) then
-                    harvest()
-                end
+            print("Row ",j)
+            local isBlock, block = turtle.inspectDown()
+            if(block.state.age == 7) then
+                harvest()
             end
             turtle.forward()
             states[2] = j + 1
             Helper.writeState(states)
         end
-        if(i % 2 == 0) then
+        -- change 1 to a 0 if the turtle is at the right corner of the field
+        if(i % 2 == 1) then
             turtle.turnRight()
             turtle.forward()
             turtle.turnRight()
@@ -134,6 +128,7 @@ local function farm()
             turtle.turnLeft()
         end
         states[1] = i + 1
+        Helper.writeState(states)
     end
     print("field harvested")
 end

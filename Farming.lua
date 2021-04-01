@@ -1,8 +1,8 @@
 local Helper = require("./Helper")
 
 local args = {...}
-local rows = 10
-local lines = 3
+local rows = 3
+local lines = 10
 local states = Helper.readState()
 
 local temp = { 
@@ -105,9 +105,9 @@ local function harvest()
     end
 end
 local function farm()
-    for i = tonumber(states[1]), lines, 1 do
+    for i = tonumber(states[1]), rows, 1 do
         print("Line ",i)
-        for j = tonumber(states[2]), rows, 1 do
+        for j = tonumber(states[2]), lines, 1 do
             print("Row ",j)
             local isBlock, block = turtle.inspectDown()
             if(block.state.age == 7) then
@@ -117,6 +117,7 @@ local function farm()
             states[2] = j + 1
             Helper.writeState(states)
         end
+        states[2] = 1
         -- change 1 to a 0 if the turtle is at the right corner of the field
         if(i % 2 == 1) then
             turtle.turnRight()
@@ -130,6 +131,7 @@ local function farm()
         states[1] = i + 1
         Helper.writeState(states)
     end
+    states[1] = 1
     print("field harvested")
 end
 

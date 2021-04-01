@@ -1,8 +1,8 @@
 local Helper = require("./Helper")
 
 local args = {...}
-local rows = 10 + 1
-local lines = 3 + 1
+local rows = 10
+local lines = 3
 local states = Helper.readState()
 
 local temp = { 
@@ -111,11 +111,12 @@ local function harvest()
     end
 end
 local function farm()
-    for i = tonumber(states[1]), rows, 1 do
-        for j = tonumber(states[2]), lines, 1 do
+    for i = tonumber(states[1]), lines, 1 do
+        for j = tonumber(states[2]), rows, 1 do
             local isMature = false
             for x = 1, #matureCrops do
-                if(turtle.inspectDown().name == matureCrops[x]) then
+                local isBlock, block = turtle.inspectDown()
+                if(block.name == matureCrops[x]) then
                     harvest()
                 end
             end

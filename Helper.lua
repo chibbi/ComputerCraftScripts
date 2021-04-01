@@ -43,5 +43,7 @@ local function writeState(state)
     file.flush()
 end
 
+-- should create functions which automatically look if the way is free (for forward and up and that stuff)
+
 
 return { GetItem = GetItem, DropItem = DropItem, isInvFull = isInvFull, readState = readState, writeState = writeState}

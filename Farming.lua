@@ -36,13 +36,14 @@ for x = 1, #acceptedFuels do
     end
 end
 
-local seedSlots = {}
-for x = 1, #acceptedSeeds do
-    local slot = Helper.GetItem(acceptedSeeds[x])
-    if(slot ~= nil) then
-        table.insert(seedSlots, slot)
-    end
-end
+local seedSlots = {1}
+-- it will take the stuff out of 16 slot
+-- for x = 1, #acceptedSeeds do
+--    local slot = Helper.GetItem(acceptedSeeds[x])
+--    if(slot ~= nil) then
+--        table.insert(seedSlots, slot)
+--    end
+-- end
 
 -- fuels the turtle and updates the fueltable
 local function fuelling()
@@ -79,6 +80,45 @@ local function walk(length)
     end
 end
 
+local function deposit()
+    turtle.turnLeft()
+    turtle.turnLeft()
+    local isBlock, block = turtle.inspect()
+    if(isBlock) then
+        if(string.match(block.name, "chest") ~= nil) then
+            local unallowedSlots = {}
+            for x = 1, #fuelSlots do
+                local data = turtle.getItemDetail(fuelSlots[x])
+                if(data ~= nil and data.name ~= "minecraft:bucket") then
+                    table.insert(unallowedSlots, fuelSlots[x])
+                    return
+                else
+                    table.remove(fuelSlots, x)
+                end
+            end
+            -- FIXME: last test this din't work, why
+            table.insert(unallowedSlots, seedSlots[1])
+            for i = 1, 16, 1 do
+                local allowed = true
+                for x = 1, #unallowedSlots do
+                    if(i == unallowedSlots[x]) then
+                        allowed = false
+                    end
+                end
+                if(allowed)then
+                    turtle.drop()
+                end
+            end
+            turtle.turnLeft()
+            turtle.turnLeft()
+            return
+        end
+    end
+    turtle.turnLeft()
+    turtle.turnLeft()
+    print("Please place a chest behind the turtle")
+end
+
 local function harvest()
     turtle.digDown()
     for x = 1, #seedSlots do
@@ -104,13 +144,18 @@ local function harvest()
         end
     end
 end
+
 local function farm()
     for i = tonumber(states[1]), rows, 1 do
         print("Line ",i)
         for j = tonumber(states[2]), lines, 1 do
             print("Row ",j)
             local isBlock, block = turtle.inspectDown()
-            if(block.state.age == 7) then
+            if(isBlock) then
+                if(block.state.age == 7) then
+                    harvest()
+                end
+            else
                 harvest()
             end
             turtle.forward()
@@ -119,19 +164,32 @@ local function farm()
         end
         states[2] = 1
         -- change 1 to a 0 if the turtle is at the right corner of the field
+        -- and rewrite the back to base stuff under "states[1] = 1"
         if(i % 2 == 1) then
             turtle.turnRight()
             turtle.forward()
             turtle.turnRight()
+            turtle.forward()
         else
             turtle.turnLeft()
             turtle.forward()
             turtle.turnLeft()
+            turtle.forward()
         end
         states[1] = i + 1
         Helper.writeState(states)
     end
     states[1] = 1
+    if(rows % 2 == 0) then
+        turtle.turnLeft()
+        walk(rows)
+        turtle.turnRight()
+    else
+        walk(lines - 1)
+        turtle.turnRight()
+        walk(rows)
+        turtle.turnRight()
+    end
     print("field harvested")
 end
 
@@ -153,8 +211,8 @@ else
 end
 term.setTextColor( colors.yellow )
 -- check if enough torches
-if(torchSlot == nil or turtle.getItemCount(torchSlot) <= amountCrossings /2 ) then
-    print("WARNING: you do not have enough torches in the inventory to light up the mine")
+if(seedSlots[1] == nil or turtle.getItemCount(seedSlots[1]) < 1 ) then
+    print("WARNING: you do not have any seeds in the ",seedSlots[1], " slot")
 end
 -- check if fuel exists
 if(next(fuelSlots) == nil ) then
@@ -168,6 +226,6 @@ print("Startup finished")
 while true do
     fuelling()
     farm()
-    -- deposit stuff into the chest behind it (IF CHEST IS BEHIND IT)
-    sleep(300)
+    deposit()
+    sleep(400)
 end

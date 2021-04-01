@@ -9,14 +9,17 @@ local temp = {
     1,
     1
 }
-if(next(states) == nil) then
+if(states[1] == nil) then
+    print("Generating New States.txt")
     Helper.writeState(temp)
+    states = temp
 end
 
 local acceptedFuels = {
     "minecraft:coal_block",
     "minecraft:coal",
-    "minecraft:lava_bucket"
+    "minecraft:lava_bucket",
+    "bloodmagic:lava_crystal"
 }
 
 local acceptedSeeds = {
@@ -108,20 +111,30 @@ local function harvest()
     end
 end
 local function farm()
-    -- deposit stuff into the chest behind it (IF CHEST IS BEHIND IT)
-    for i = states[1], rows, 1 do
-        for j = states[2], lines, 1 do
+    for i = tonumber(states[1]), rows, 1 do
+        for j = tonumber(states[2]), lines, 1 do
             local isMature = false
             for x = 1, #matureCrops do
                 if(turtle.inspectDown().name == matureCrops[x]) then
                     harvest()
                 end
             end
+            turtle.forward()
             states[2] = j + 1
             Helper.writeState(states)
         end
+        if(i % 2 == 0) then
+            turtle.turnRight()
+            turtle.forward()
+            turtle.turnRight()
+        else
+            turtle.turnLeft()
+            turtle.forward()
+            turtle.turnLeft()
+        end
         states[1] = i + 1
     end
+    print("field harvested")
 end
 
 -- check if args are filled in, or args == -h (-h stands for --help)
@@ -152,7 +165,11 @@ end
 
 -- Normal Operation
 term.setTextColor( colors.white )
+
+print("Startup finished")
 while true do
     fuelling()
     farm()
+    -- deposit stuff into the chest behind it (IF CHEST IS BEHIND IT)
+    sleep(300)
 end

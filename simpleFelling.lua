@@ -148,6 +148,26 @@ local function placeSapling()
             table.remove(saplingSlots, x)
         end
     end
+    if(next(saplingSlots) == nil) then
+        local isnil = true
+            term.setTextColor( colors.red )
+            print("No saplings any more")
+            term.setTextColor( colors.white )
+            while(isnil) do
+                for i = 1, 16, 1 do
+                    local data = turtle.getItemDetail(i)
+                    if(data ~= nil) then
+                        if(string.match(data.name, "sapling") ~= nil) then
+                            table.insert(saplingSlots, i)
+                        end
+                    end
+                end
+            end
+            term.setTextColor( colors.yellow )
+            print("Got saplings, Continuing")
+            term.setTextColor( colors.white )
+            placeSapling()
+    end
 end
 
 local function fell()
@@ -170,7 +190,10 @@ end
 term.setTextColor( colors.yellow )
 -- check if fuel exists
 if(next(fuelSlots) == nil ) then
-    print("WARNING: you do not have any fuel, the turtle is likely to run out of juice \n Current Fuel: ", turtle.getFuelLevel())
+    print("WARNING: you do not have any fuel, the turtle is likely to run out of juice \nCurrent Fuel: ", turtle.getFuelLevel())
+end
+if(next(saplingSlots) == nil ) then
+    print("WARNING: you do not have any saplings, the turtle is likely not able to place a new tree")
 end
 
 -- Normal Operation

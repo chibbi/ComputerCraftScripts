@@ -179,7 +179,7 @@ if(torchSlot == nil or turtle.getItemCount(torchSlot) <= amountCrossings /2 ) th
 end
 -- check if fuel exists
 if(next(fuelSlots) == nil ) then
-    print("WARNING: you do not have any fuel, the turtle is likely to run out of juice \n Current Fuel: ", turtle.getFuelLevel())
+    print("WARNING: you do not have any fuel, the turtle is likely to run out of juice \nCurrent Fuel: ", turtle.getFuelLevel())
 end
 -- check if chests exist
 if(chestSlot == nil or turtle.getItemCount(chestSlot) < 1  ) then

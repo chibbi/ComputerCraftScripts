@@ -99,6 +99,7 @@ local function deposit()
             -- FIXME: last test this din't work, why
             table.insert(unallowedSlots, seedSlots[1])
             for i = 1, 16, 1 do
+                turtle.select(i)
                 local allowed = true
                 for x = 1, #unallowedSlots do
                     if(i == unallowedSlots[x]) then
@@ -147,9 +148,7 @@ end
 
 local function farm()
     for i = tonumber(states[1]), rows, 1 do
-        print("Line ",i)
         for j = tonumber(states[2]), lines, 1 do
-            print("Row ",j)
             local isBlock, block = turtle.inspectDown()
             if(isBlock) then
                 if(block.state.age == 7) then

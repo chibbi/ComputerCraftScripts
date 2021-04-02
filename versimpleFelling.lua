@@ -1,8 +1,9 @@
 local Helper = require("./Helper")
 
+-- TODO/Future Plan: add states here too (like Farming) but not sure if i will do it
+
+
 local args = {...}
-local rows = 3
-local lines = 10
 local states = Helper.readState()
 
 local temp = { 
@@ -22,12 +23,6 @@ local acceptedFuels = {
     "bloodmagic:lava_crystal"
 }
 
-local acceptedSeeds = {
-    "minecraft:carrot",
-    "minecraft:potato",
-    "minecraft:wheat_seeds"
-}
-
 local fuelSlots = {}
 for x = 1, #acceptedFuels do
     local slot = Helper.GetItem(acceptedFuels[x])
@@ -36,14 +31,15 @@ for x = 1, #acceptedFuels do
     end
 end
 
-local seedSlots = {1}
--- it will take the stuff out of 16 slot
--- for x = 1, #acceptedSeeds do
---    local slot = Helper.GetItem(acceptedSeeds[x])
---    if(slot ~= nil) then
---        table.insert(seedSlots, slot)
---    end
--- end
+local saplingSlots = {}
+for i = 1, 16, 1 do
+    local data = turtle.getItemDetail(i)
+    if(data ~= nil) then
+        if(string.match(data.name, "sapling") ~= nil) then
+            table.insert(saplingSlots, i)
+        end
+    end
+end
 
 -- fuels the turtle and updates the fueltable
 local function fuelling()
@@ -103,7 +99,15 @@ local function deposit()
                     table.remove(fuelSlots, x)
                 end
             end
-            table.insert(unallowedSlots, seedSlots[1])
+            for x = 1, #saplingSlots do
+                local data = turtle.getItemDetail(saplingSlots[x])
+                if(data ~= nil and data.name ~= "minecraft:bucket") then
+                    table.insert(unallowedSlots, saplingSlots[x])
+                    return
+                else
+                    table.remove(saplingSlots, x)
+                end
+            end
             for i = 1, 16, 1 do
                 turtle.select(i)
                 local allowed = true
@@ -126,101 +130,44 @@ local function deposit()
     print("Please place a chest behind the turtle")
 end
 
-local function harvest()
-    turtle.digDown()
-    for x = 1, #seedSlots do
-        local data = turtle.getItemDetail(seedSlots[x])
+local function allAroundDig()
+    for i = 1, 4, 1 do
+        turtle.dig()
+        turtle.turnLeft()
+    end
+end
+
+local function placeSapling()
+    for x = 1, #saplingSlots do
+        local data = turtle.getItemDetail(saplingSlots[x])
         if(data ~= nil) then
-            turtle.select(seedSlots[x])
-            turtle.placeDown()
+            turtle.select(saplingSlots[x])
+            turtle.place()
             return
         else
-            table.remove(seedSlots, x)
+            table.remove(saplingSlots, x)
         end
-    end
-    if(next(seedSlots) == nil) then
-        local isnil = true
-            term.setTextColor( colors.red )
-            print("No seeds any more")
-            term.setTextColor( colors.white )
-            while(isnil) do
-                for x = 1, #acceptedSeeds do
-                    local slot = Helper.GetItem(acceptedSeeds[x])
-                    if(slot ~= nil) then
-                        table.insert(seedSlots, slot)
-                        isnil = false
-                    end
-                end
-            end
-            term.setTextColor( colors.yellow )
-            print("Got seeds, Continuing")
-            term.setTextColor( colors.white )
-            harvest()
     end
 end
 
-local function farm()
-    for i = tonumber(states[1]), rows, 1 do
-        for j = tonumber(states[2]), lines, 1 do
-            local isBlock, block = turtle.inspectDown()
-            if(isBlock) then
-                if(block.state.age == 7) then
-                    harvest()
-                end
-            else
-                harvest()
-            end
-            turtle.forward()
-            states[2] = j + 1
-            Helper.writeState(states)
-        end
-        states[2] = 1
-        -- change 1 to a 0 if the turtle is at the right corner of the field
-        -- and rewrite the back to base stuff under "states[1] = 1"
-        if(i % 2 == 1) then
-            turtle.turnRight()
-            turtle.forward()
-            turtle.turnRight()
-            turtle.forward()
-        else
-            turtle.turnLeft()
-            turtle.forward()
-            turtle.turnLeft()
-            turtle.forward()
-        end
-        states[1] = i + 1
-        Helper.writeState(states)
+local function fell()
+    turtle.dig()
+    turtle.forward()
+    local goneUp = 1
+    while(turtle.inspectUp()) do
+        allAroundDig()
+        turtle.digUp()
+        turtle.up(0)
+        goneUp = goneUp + 1;
     end
-    states[1] = 1
-    if(rows % 2 == 0) then
-        turtle.turnLeft()
-        walk(rows)
-        turtle.turnRight()
-    else
-        walk(lines - 1)
-        turtle.turnRight()
-        walk(rows)
-        turtle.turnRight()
+    for i = 1, goneUp, 1 do
+        turtle.down()
     end
-    print("field harvested")
+    turtle.back()
+    print("cut down the tree")
 end
 
--- check if args are filled in, or args == -h (-h stands for --help)
-if(args == nil or args == "-h") then
-    error("Farming ROWS LINES \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
-else
-    if(args[1] ~= nil ) then
-        rows = tonumber(args[1])
-    end
-    if(args[2] ~= nil ) then
-        lines = tonumber(args[2])
-    end
-end
 term.setTextColor( colors.yellow )
--- check if enough seeds
-if(seedSlots[1] == nil or turtle.getItemCount(seedSlots[1]) < 1 ) then
-    print("WARNING: you do not have any seeds in the ",seedSlots[1], " slot")
-end
 -- check if fuel exists
 if(next(fuelSlots) == nil ) then
     print("WARNING: you do not have any fuel, the turtle is likely to run out of juice \n Current Fuel: ", turtle.getFuelLevel())
@@ -232,7 +179,14 @@ term.setTextColor( colors.white )
 print("Startup finished")
 while true do
     fuelling()
-    farm()
+    local isBlock, block = turtle.inspectDown()
+    if(isBlock) then
+        if(string.match(block.name, "log") ~= nil) then
+            fell()
+        end
+    else
+        placeSapling()
+    end
     deposit()
     sleep(400)
 end

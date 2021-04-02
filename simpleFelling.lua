@@ -78,7 +78,6 @@ local function deposit()
     local isBlock, block = turtle.inspect()
     if(isBlock) then
         if(string.match(block.name, "chest") ~= nil) then
-            print("Depositing assets")
             local unallowedSlots = {}
             for x = 1, #fuelSlots do
                 local data = turtle.getItemDetail(fuelSlots[x])
@@ -147,6 +146,7 @@ local function placeSapling()
                     if(data ~= nil) then
                     if(string.match(data.name, "sapling") ~= nil) then --FIXME
                         -- Too long without yielding
+                        -- i have no idea right now why this happens sooooo i will just leave this comment here
                         table.insert(saplingSlots, i)
                     end
                 end
@@ -194,12 +194,10 @@ while true do
     local isBlock, block = turtle.inspect()
     if(isBlock) then
         if(string.match(block.name, "log") ~= nil) then
-            print("DEBUG: Felling")
             fell()
+            deposit()
         end
     else
-        print("DEBUG: placing sapling")
         placeSapling()
     end
-    deposit()
 end

@@ -78,12 +78,12 @@ local function deposit()
     local isBlock, block = turtle.inspect()
     if(isBlock) then
         if(string.match(block.name, "chest") ~= nil) then
+            print("Depositing assets")
             local unallowedSlots = {}
             for x = 1, #fuelSlots do
                 local data = turtle.getItemDetail(fuelSlots[x])
                 if(data ~= nil and data.name ~= "minecraft:bucket") then
                     table.insert(unallowedSlots, fuelSlots[x])
-                    return
                 else
                     table.remove(fuelSlots, x)
                 end
@@ -92,7 +92,6 @@ local function deposit()
                 local data = turtle.getItemDetail(saplingSlots[x])
                 if(data ~= nil and data.name ~= "minecraft:bucket") then
                     table.insert(unallowedSlots, saplingSlots[x])
-                    return
                 else
                     table.remove(saplingSlots, x)
                 end
@@ -191,14 +190,15 @@ term.setTextColor( colors.white )
 print("Startup finished")
 while true do
     fuelling()
-    local isBlock, block = turtle.inspectDown()
+    local isBlock, block = turtle.inspect()
     if(isBlock) then
         if(string.match(block.name, "log") ~= nil) then
+            print("DEBUG: Felling")
             fell()
         end
     else
+        print("DEBUG: placing sapling")
         placeSapling()
     end
     deposit()
-    sleep(400)
 end

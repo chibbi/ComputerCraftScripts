@@ -81,7 +81,6 @@ local function deposit()
                 local data = turtle.getItemDetail(fuelSlots[x])
                 if(data ~= nil and data.name ~= "minecraft:bucket") then
                     table.insert(unallowedSlots, fuelSlots[x])
-                    return
                 else
                     table.remove(fuelSlots, x)
                 end

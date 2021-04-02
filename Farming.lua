@@ -11,6 +11,8 @@ local temp = {
 }
 if(states[1] == nil) then
     -- FIXME: seems to ALWAYS generate a new States.txt (which renders this useless)
+    -- or it does not generate a new one?
+    -- well gotta check this when i have time 
     print("Generating New States.txt")
     Helper.writeState(temp)
     states = temp

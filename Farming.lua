@@ -10,6 +10,7 @@ local temp = {
     1
 }
 if(states[1] == nil) then
+    -- FIXME: seems to ALWAYS generate a new States.txt (which renders this useless)
     print("Generating New States.txt")
     Helper.writeState(temp)
     states = temp

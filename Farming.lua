@@ -204,6 +204,7 @@ local function farm()
         walk(rows)
         turtle.turnRight()
     end
+    Helper.writeState(states)
     print("field harvested")
 end
 

@@ -96,7 +96,6 @@ local function deposit()
                     table.remove(fuelSlots, x)
                 end
             end
-            -- FIXME: last test this din't work, why
             table.insert(unallowedSlots, seedSlots[1])
             for i = 1, 16, 1 do
                 turtle.select(i)
@@ -196,16 +195,11 @@ end
 if(args == nil or args == "-h") then
     error("Farming ROWS LINES \n all in CAPS are variables which you have to replace with your desired values (integer / numbers)",4)
 else
-    -- FIXME: this check of args doesn't work, and args are not used yet 
     if(args[1] ~= nil ) then
         rows = tonumber(args[1])
-    else   
-        --error("You have to specify the amount of Crossings you want\n more info try: StripMining -h",4)
     end
     if(args[2] ~= nil ) then
         lines = tonumber(args[2])
-    else   
-        --error("You have to specify how long the sideTunnel should be\n more info try: StripMining -h",4)
     end
 end
 term.setTextColor( colors.yellow )

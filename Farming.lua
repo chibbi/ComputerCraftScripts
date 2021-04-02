@@ -59,16 +59,23 @@ local function fuelling()
             end
         end
         if(next(fuelSlots) == nil) then
-            for x = 1, #acceptedFuels do
-                local slot = Helper.GetItem(acceptedFuels[x])
-                if(slot ~= nil) then
-                    table.insert(fuelSlots, slot)
-                    return
+            local isnil = true
+            term.setTextColor( colors.red )
+            print("No Fuel Any more")
+            term.setTextColor( colors.white )
+            while(isnil) do
+                for x = 1, #acceptedFuels do
+                    local slot = Helper.GetItem(acceptedFuels[x])
+                    if(slot ~= nil) then
+                        table.insert(fuelSlots, slot)
+                        isnil = false
+                    end
                 end
             end
-            if(next(fuelSlots) == nil) then
-                error("No Fuel Any More", 0)
-            end
+            term.setTextColor( colors.yellow )
+            print("Got Fuel, Continuing")
+            term.setTextColor( colors.white )
+            fuelling()
         end
     end
 end
@@ -132,16 +139,23 @@ local function harvest()
         end
     end
     if(next(seedSlots) == nil) then
-        for x = 1, #acceptedSeeds do
-            local slot = Helper.GetItem(acceptedSeeds[x])
-            if(slot ~= nil) then
-                table.insert(seedSlots, slot)
-                return
+        local isnil = true
+            term.setTextColor( colors.red )
+            print("No seeds any more")
+            term.setTextColor( colors.white )
+            while(isnil) do
+                for x = 1, #acceptedSeeds do
+                    local slot = Helper.GetItem(acceptedSeeds[x])
+                    if(slot ~= nil) then
+                        table.insert(seedSlots, slot)
+                        isnil = false
+                    end
+                end
             end
-        end
-        if(next(fuelSlots) == nil) then
-            error("No Seeds Any More", 0)
-        end
+            term.setTextColor( colors.yellow )
+            print("Got seeds, Continuing")
+            term.setTextColor( colors.white )
+            harvest()
     end
 end
 

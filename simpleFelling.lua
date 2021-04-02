@@ -145,7 +145,8 @@ local function placeSapling()
             for i = 1, 16, 1 do
                 local data = turtle.getItemDetail(i)
                     if(data ~= nil) then
-                    if(string.match(data.name, "sapling") ~= nil) then
+                    if(string.match(data.name, "sapling") ~= nil) then --FIXME
+                        -- Too long without yielding
                         table.insert(saplingSlots, i)
                     end
                 end

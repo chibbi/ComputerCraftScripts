@@ -164,6 +164,7 @@ local function fell()
     turtle.forward()
     local goneUp = 1
     while(turtle.inspectUp()) do
+        -- TODO: check if leaves are in front and only then do the allAroundDig
         allAroundDig()
         turtle.digUp()
         turtle.up(0)

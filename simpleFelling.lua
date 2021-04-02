@@ -4,17 +4,6 @@ local Helper = require("./Helper")
 
 
 local args = {...}
-local states = Helper.readState()
-
-local temp = { 
-    1,
-    1
-}
-if(states[1] == nil) then
-    print("Generating New States.txt")
-    Helper.writeState(temp)
-    states = temp
-end
 
 local acceptedFuels = {
     "minecraft:coal_block",
@@ -150,23 +139,23 @@ local function placeSapling()
     end
     if(next(saplingSlots) == nil) then
         local isnil = true
-            term.setTextColor( colors.red )
-            print("No saplings any more")
-            term.setTextColor( colors.white )
-            while(isnil) do
-                for i = 1, 16, 1 do
-                    local data = turtle.getItemDetail(i)
+        term.setTextColor( colors.red )
+        print("No saplings any more")
+        term.setTextColor( colors.white )
+        while(isnil) do
+            for i = 1, 16, 1 do
+                local data = turtle.getItemDetail(i)
                     if(data ~= nil) then
-                        if(string.match(data.name, "sapling") ~= nil) then
-                            table.insert(saplingSlots, i)
-                        end
+                    if(string.match(data.name, "sapling") ~= nil) then
+                        table.insert(saplingSlots, i)
                     end
                 end
             end
-            term.setTextColor( colors.yellow )
-            print("Got saplings, Continuing")
-            term.setTextColor( colors.white )
-            placeSapling()
+        end
+        term.setTextColor( colors.yellow )
+        print("Got saplings, Continuing")
+        term.setTextColor( colors.white )
+        placeSapling()
     end
 end
 

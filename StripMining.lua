@@ -49,7 +49,23 @@ local function fuelling()
                 end
             end
             if(next(fuelSlots) == nil) then
-                error("No Fuel Any More", 0)
+                local isnil = true
+                term.setTextColor( colors.red )
+                print("No Fuel Any more")
+                term.setTextColor( colors.white )
+                while(isnil) do
+                    for x = 1, #acceptedFuels do
+                        local slot = Helper.GetItem(acceptedFuels[x])
+                        if(slot ~= nil) then
+                            table.insert(fuelSlots, slot)
+                            isnil = false
+                        end
+                    end
+                end
+                term.setTextColor( colors.yellow )
+                print("Got Fuel, Continuing")
+                term.setTextColor( colors.white )
+                fuelling()
             end
         end
     end

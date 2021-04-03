@@ -7,11 +7,12 @@ end
 fs.makeDir(dire)
 
 local primaryRequest = http.get(url .. "scriptList.txt")
-local allFiles = primaryRequest.readAll()
-
+local allFiles = {}
+local temp = primaryRequest.readAll()
+temp:gsub(".",function(c) table.insert(allFiles,c) end)
 for i = 1, #allFiles, 1 do
     local fileName = allFiles[i]
     local request = http.get(url .. fileName)
-    local file = fs.open(dire .. fileName, "w")
+    local err, file = fs.open(dire .. fileName, "w") -- => FIXME: file doesn't exist yet
     file.write(request.readAll())
 end

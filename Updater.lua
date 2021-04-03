@@ -1,27 +1,17 @@
-if(fs.exists("ChibbiScripts/")) then
-    fs.delete("ChibbiScripts/")
+local dire = "ChibbiScripts/"
+local url = "https://raw.githubusercontent.com/chibbi/ComputerCraftScripts/main/"
+
+if(fs.exists(dire)) then
+    fs.delete(dire)
 end
-fs.makeDir("ChibbiScripts/")
+fs.makeDir(dire)
 
+local primaryRequest = http.get(url .. "scriptList.txt")
+local allFiles = primaryRequest.readAll()
 
-http.request("ChibbiScripts/scriptList.txt")
-
-
-local requesting = true
-
-while requesting do
-  local event, url, sourceText = os.pullEvent()
-  
-  if event == "http_success" then
-    local respondedText = sourceText.readAll()
-    
-    sourceText.close()
-    print(respondedText)
-    
-    requesting = false
-  elseif event == "http_failure" then
-    print("Server didn't respond.")
-    
-    requesting = false
-  end
+for i = 1, #allFiles, 1 do
+    local fileName = allFiles[i]
+    local request = http.get(url .. fileName)
+    local file = fs.open(dire .. fileName, "w")
+    file.write(request.readAll())
 end

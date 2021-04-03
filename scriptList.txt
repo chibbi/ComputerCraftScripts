@@ -1,1 +1,1 @@
-{1.0=https://raw.githubusercontent.com/chibbi/ComputerCraftScripts/main/Helper.lua, 2.0=https://raw.githubusercontent.com/chibbi/ComputerCraftScripts/main/StripMining.lua, 3.0=https://raw.githubusercontent.com/chibbi/ComputerCraftScripts/main/Farming.lua, 4.0=https://raw.githubusercontent.com/chibbi/ComputerCraftScripts/main/simpleFelling.lua, 5.0=1, 6.0=1, 7.0=1, 8.0=1, 9.0=1, 10.0=1}
+{1.0=Helper.lua, 2.0=StripMining.lua, 3.0=Farming.lua, 4.0=simpleFelling.lua, 5.0=1, 6.0=1, 7.0=1, 8.0=1, 9.0=1, 10.0=1}

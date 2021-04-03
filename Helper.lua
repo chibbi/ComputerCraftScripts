@@ -7,6 +7,8 @@ local function GetItem(desiredItemID)
             end
         end
     end
+    -- to avoid "too long without yielding" error:
+    turtle.inspect()
 end
 
 local function DropItem(desiredItemID) 

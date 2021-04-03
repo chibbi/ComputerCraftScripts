@@ -11,6 +11,12 @@ local acceptedFuels = {
     "minecraft:lava_bucket"
 }
 
+local fluids = {
+    "minecraft:water",
+    "minecraft:lava",
+    "galacticraftcore:crude_oil"
+}
+
 local trash = {
     "minecraft:cobblestone"
 }
@@ -124,15 +130,68 @@ local function walk(length)
     end
 end
 
+local function checkforFuild()
+    local isBlock, block = turtle.inspect()
+    for x = 1, #fluids do
+        if(block.name == fluids[x]) then
+            return true
+        end
+    end
+    return false
+end
+
+local function digUp()
+    local isBlock, block = turtle.inspectUp()
+    while(isBlock) do
+        isBlock, block = turtle.inspectUp()
+        if(checkforFuild()) then
+            return
+        else
+            turtle.digUp()
+        end
+    end
+end
+
+local function dig()
+    local isBlock, block = turtle.inspect()
+    while(isBlock) do
+        isBlock, block = turtle.inspect()
+        if(checkforFuild()) then
+            return
+        else
+            turtle.dig()
+        end
+    end
+end
+
+-- another (unused) possibility:
+local function unuseddig()
+    if(turtle.dig()) then
+        unuseddig()
+    else
+        return
+    end
+end
+
+local function digDown()
+    local isBlock, block = turtle.inspectDown()
+    while(isBlock) do
+        isBlock, block = turtle.inspectDown()
+        if(checkforFuild()) then
+            return
+        else
+            turtle.digDown()
+        end
+    end
+end
+
 -- is just digging a three high one wide tunnel (digs down, up and forward)
 local function digForwardTunnel(tunnelLength)
     for i = 1, tunnelLength, 1 do
-        -- TODO: check if it is Air, if not keep digging
-        -- do that independently for dig(), digUp() and digDown()
-        turtle.dig()
+        dig()
         turtle.forward()
-        turtle.digUp()
-        turtle.digDown()
+        digUp()
+        digDown()
     end
 end
 

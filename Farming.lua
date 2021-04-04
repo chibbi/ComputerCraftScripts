@@ -1,4 +1,4 @@
-local Helper = require("./Helper")
+local Helper = require("Helper")
 
 local args = {...}
 local rows = 3

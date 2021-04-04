@@ -1,4 +1,4 @@
-local Helper = require("./Helper")
+local Helper = require("Helper")
 
 -- TODO/Future Plan: add states here too (like Farming) but not sure if i will do it
 
